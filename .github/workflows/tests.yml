@@ -23,7 +23,24 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:coverage #this command generates a coverage report in the coverage/direcotry
-      - uses: actions/upload-artifact@v7  #this step uploads that entire directory as an artifact named "test-coverage-report"
+      - uses: actions/upload-artifact@v7  #this step uploads that entire directory as an artifact named "test-coverage-report". This will upload archive zip.
         with:
-          name: test-coverage-report
+          name: test-coverage-report #archived, zip file name
           path: coverage/
+
+  e2e:
+    name: E2E Tests with Playwright
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v7  # archived, zip upload.
+        with:
+          path: playwright-report/index.html
+          archive: false  # will upload the Playwright report as a single file without zipping, allowing it to be previewed in the browser.
